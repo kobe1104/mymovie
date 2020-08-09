@@ -8,49 +8,36 @@ class MovieForm extends Form {
   state = {
     data: {
       title: "",
-      _id: "",
-      genre: "",
+      genreId: "",
       numberInStock: "",
       dailyRentalRate: "",
-      genreId: "",
     },
-    genres: genreAPI.getGenres(),
+    genres: [],
     movies: getMovies(),
     errors: {},
   };
-  componentWillMount() {
-    // set data if current movie exists
-    if (this.props.match.params.id) {
-      // const data = getMovie(this.props.match.params.id);
-      const id = this.props.match.params.id;
-
-      const data = this.state.movies.find(
-        (m) => m._id === this.props.match.params.id
-      );
-      console.log("ss", data);
-
-      // change genre to a string:
-      const { name, _id } = data.genre;
-      data.genre = name;
-      data.genreId = _id;
-      this.setState({ data });
-    } else {
-      // set movie id
-      const newData = { ...this.state.data };
-
-      newData._id = "2312313";
-      // set action genre by default
-      const action = genreAPI.getGenres()[0];
-      newData.genre = action.name;
-      newData.genreId = action._id;
-      newData.liked = false;
-      this.setState({ data: newData });
-      console.log(this.state.data);
-    }
-  }
+  componentWillMount() {}
   componentDidMount() {
-    // this.showError();
+    // fetch genres
+    const genres = getGenres();
+    this.setState({ genres });
+    // if no movie ID break, else if no movie found go not found page
+    // else populate from with movie
+    const movieId = this.props.match.params.id;
+    if (movieId === "new") return;
+
+    const movie = getMovie(movieId);
+    if (!movie) return this.props.history.replace("/not-found");
+    this.setState({ data: this.mapMovieModel(movie) });
   }
+  mapMovieModel = (movie) => {
+    return {
+      _id: movie._id,
+      genreId: movie.genre._id,
+      numberInStock: movie.numberInStock,
+      dailyRentalRate: movie.dailyRentalRate,
+    };
+  };
   showError = () => {
     console.log(this.state.data);
     const result = Joi.validate(this.state.data, this.schema, {
@@ -59,34 +46,27 @@ class MovieForm extends Form {
     console.log(result);
   };
   schema = {
-    title: Joi.string().required().label("Title"),
-    genre: Joi.string().required().label("Genre"),
-    numberInStock: Joi.number().required().label("Number In Stock"),
-    dailyRentalRate: Joi.number().required().label("Rate"),
     _id: Joi.string(),
-    liked: Joi.boolean(),
-    genreId: Joi.string(),
+    title: Joi.string().required().label("Title"),
+    genreId: Joi.string().required().label("Genre"),
+    numberInStock: Joi.number()
+      .required()
+      .min(0)
+      .max(100)
+      .label("Number In Stock"),
+    dailyRentalRate: Joi.number().required().min(0).max(10).label("Rate"),
   };
   doSubmit = () => {
-    // call save movie api
-    console.log("save movie");
-    // put back genre obj
-    const genre = this.state.genres.find((g) => {
-      return g.name === this.state.data.genre;
-    });
-    this.state.data.genre = genre;
-    this.state.data.genreId = genre._id;
-    console.log("movie:", this.state.data);
+    // call save movie API
     saveMovie(this.state.data);
-    this.props.history.push("/");
+    this.props.history.push("/movies");
   };
   render() {
-    // console.log(this.props);
     return (
       <form onSubmit={this.handleSubmit}>
         {this.renderInput("title", "Title", true)}
-        {this.renderInput("genre", "Genre")}
-        {this.renderInput("numberInStock", "Number In Stock")}
+        {this.renderSelect("genreId", "Genre", this.state.genres)}
+        {this.renderInput("numberInStock", "Number In Stock", "number")}
         {this.renderInput("dailyRentalRate", "Rate")}
         {this.renderButton("Save")}
         <button onClick={this.showError}>show error</button>
