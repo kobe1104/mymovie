@@ -69,9 +69,13 @@ class MoviesList extends Component {
           />
         </div>
         <div className="col">
-          <button className="btn btn-primary">
-            <Link to="/movies/new">New Movie</Link>
-          </button>
+          <Link
+            to="/movies/new"
+            className="btn btn-primary"
+            style={{ marginBottom: 20 }}
+          >
+            New Movie
+          </Link>
           {this.state.allMovies.length ? (
             <h1>currently showing:{totalCount} movies</h1>
           ) : (
