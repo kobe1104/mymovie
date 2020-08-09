@@ -6,11 +6,11 @@ const Select = ({ name, label, options, error, ...rest }) => {
       <label htmlFor={name}>{label}</label>
       <select name={name} id={name} {...rest} className="form-control">
         <option value="" />
-        {options.map((option) => {
+        {options.map((option) => (
           <option value={option._id} key={option._id}>
             {option.name}
-          </option>;
-        })}
+          </option>
+        ))}
       </select>
       {error && <div className="alert alert-danger">{error}</div>}
     </div>

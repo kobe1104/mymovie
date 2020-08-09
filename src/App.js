@@ -18,7 +18,6 @@ function App() {
         <Switch>
           <Route path="/login" component={LoginForm} />
           <Route path="/register" component={registerForm} />
-          <Route path="/movies/new" component={MovieForm} />
           <Route path="/movies/:id" component={MovieForm} />
           <Route path="/movies" component={MoviesList}></Route>
           <Route path="/customers" component={Customers}></Route>

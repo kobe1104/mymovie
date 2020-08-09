@@ -19,7 +19,7 @@ class MovieForm extends Form {
   componentWillMount() {}
   componentDidMount() {
     // fetch genres
-    const genres = getGenres();
+    const genres = genreAPI.getGenres();
     this.setState({ genres });
     // if no movie ID break, else if no movie found go not found page
     // else populate from with movie
@@ -33,6 +33,7 @@ class MovieForm extends Form {
   mapMovieModel = (movie) => {
     return {
       _id: movie._id,
+      title: movie.title,
       genreId: movie.genre._id,
       numberInStock: movie.numberInStock,
       dailyRentalRate: movie.dailyRentalRate,
@@ -66,10 +67,9 @@ class MovieForm extends Form {
       <form onSubmit={this.handleSubmit}>
         {this.renderInput("title", "Title", true)}
         {this.renderSelect("genreId", "Genre", this.state.genres)}
-        {this.renderInput("numberInStock", "Number In Stock", "number")}
+        {this.renderInput("numberInStock", "Number In Stock")}
         {this.renderInput("dailyRentalRate", "Rate")}
         {this.renderButton("Save")}
-        <button onClick={this.showError}>show error</button>
       </form>
     );
   }

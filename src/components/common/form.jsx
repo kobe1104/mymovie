@@ -58,7 +58,7 @@ class Form extends Component {
     );
   };
   renderSelect = (name, label, options) => {
-    const { data, error } = this.state;
+    const { data, errors } = this.state;
     return (
       <Select
         name={name}
@@ -66,7 +66,7 @@ class Form extends Component {
         label={label}
         options={options}
         onChange={this.handleChange}
-        error={error[name]}
+        error={errors[name]}
       />
     );
   };
